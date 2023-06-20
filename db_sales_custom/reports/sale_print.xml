@@ -26,10 +26,10 @@
                                     <span t-esc="line.partner_id.name"/>
                                 </td>
                                 <td>
-                                    <span t-esc="line.partner_id.street"/>
+                                    <span t-esc="line.delivery_address"/>
                                 </td>
                                 <td>
-                                    <span t-esc="line.partner_id.phone"/>
+                                    <span t-esc="line.mobile_number"/>
                                 </td>
                                 <td>
                                     <span t-esc="line.amount_total"/>
@@ -44,7 +44,7 @@
 
     <report
             id="action_report_export_sale_order"
-            string="Sale Report"
+            string="طباعه التوصيل"
             model="emp.sale.report"
             report_type="qweb-pdf"
             name="db_sales_custom.sale_report_print_template"

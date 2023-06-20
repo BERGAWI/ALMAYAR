@@ -23,6 +23,9 @@
                         <field name="discount_rate" class="oe_inline"/>
                     </div>
                 </xpath>
+                <xpath expr="//field[@name='tax_totals']" position="before">
+                    <field name="amount_before_discount"/>
+                 </xpath>
             </field>
         </record>
     </data>

@@ -33,7 +33,7 @@
         </field>
     </record>
     <record model="ir.actions.act_window" id="representative_company_action">
-        <field name="name">Representative Company</field>
+        <field name="name">اسماء الشركات</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">representative.company</field>
         <field name="view_mode">tree,form</field>

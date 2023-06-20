@@ -1,28 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
 <odoo>
-    <template id="stock_picking_report" inherit_id="stock.report_picking">
-        <xpath expr="//div/p[2]" position="before">
+    <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='total']" position="after">
             <h5 style="text-align:left;">
                 <div class="clearfix mb-4">
                     <div id="total" class="row">
                         <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
                             <table class="table table-sm table-borderless" style="page-break-inside: avoid;" dir="rtl">
                                 <tr>
-                                    <td> إجمالى الكميات المطلوبه </td>
+                                    <td> الاجمالى قبل الخصم </td>
                                     <td>
-                                        <span t-esc="o.total_demand_qty"/>
+                                        <span t-esc="o.amount_before_discount"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>إجمالى الكميات المستلمه</td>
+                                    <td>  الخصم </td>
                                     <td>
-                                        <span t-esc="o.total_done_qty"/>
+                                        <span t-esc="o.amount_discount"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>إجمالى  اﻻصناف </td>
+                                    <td>  اﻻجمالى بعد الخصم </td>
                                     <td>
-                                        <span t-esc="o.total_lines"/>
+                                        <span t-esc="o.amount_before_discount -  o.amount_discount"/>
                                     </td>
                                 </tr>
                             </table>
@@ -33,3 +33,4 @@
         </xpath>
     </template>
 </odoo>
+

@@ -1,27 +1,5 @@
-# -*- coding: utf-8 -*-
-#############################################################################
-#
-#    Cybrosys Technologies Pvt. Ltd.
-#
-#    Copyright (C) 2022-TODAY Cybrosys Technologies(<https://www.cybrosys.com>).
-#    Author: Faslu Rahman(odoo@cybrosys.com)
-#
-#    You can modify it under the terms of the GNU AFFERO
-#    GENERAL PUBLIC LICENSE (AGPL v3), Version 3.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU AFFERO GENERAL PUBLIC LICENSE (AGPL v3) for more details.
-#
-#    You should have received a copy of the GNU AFFERO GENERAL PUBLIC LICENSE
-#    (AGPL v3) along with this program.
-#    If not, see <http://www.gnu.org/licenses/>.
-#
-#############################################################################
 
 from odoo import api, fields, models
-
 
 class AccountInvoice(models.Model):
     _inherit = "account.move"
@@ -34,6 +12,14 @@ class AccountInvoice(models.Model):
                                  readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     amount_discount = fields.Monetary(string='Discount', store=True, readonly=True, compute='_compute_amount',
                                       track_visibility='always')
+
+    amount_before_discount = fields.Float(compute='get_amount_before_discount', string=" الاجمالى قبل الخصم ")
+
+    @api.depends('amount_discount', 'amount_untaxed')
+    def get_amount_before_discount(self):
+        for rec in self:
+            tot = rec.amount_untaxed + rec.amount_discount
+            rec.amount_before_discount = tot
 
     @api.depends(
         'line_ids.matched_debit_ids.debit_move_id.move_id.payment_id.is_matched',

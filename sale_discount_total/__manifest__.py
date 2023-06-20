@@ -11,5 +11,7 @@
         'views/account_invoice_view.xml',
         'views/invoice_report.xml',
         'views/sale_order_report.xml',
+        'reports/sale_templates.xml',
+        'reports/invoice_templates.xml',
     ],
 }

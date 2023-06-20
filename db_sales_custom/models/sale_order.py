@@ -53,10 +53,10 @@ class SaleOrder(models.Model):
 
     delivery_address = fields.Char(string='العنوان')
     mobile_number = fields.Char(string='رقم الهاتف')
-    sales_representative_id = fields.Many2one('sale.representative', string='مندوب المبيعات', required=True)
+    sales_representative_id = fields.Many2one('sale.representative', string='مندوب توصيل', required=True)
     total_qty = fields.Float(string='إجمالى الكميات', compute='_compute_total_qty')
     total_lines = fields.Float(string='عدد اﻻصناف', compute='_compute_total_qty')
-    partner_phone = fields.Char(related='partner_id.phone')
+    partner_phone = fields.Char(related='partner_id.phone', string="هاتف العميل")
 
     @api.depends('order_line')
     def _compute_total_qty(self):
@@ -83,16 +83,20 @@ class SaleOrder(models.Model):
         return res
 
     def action_return_delivery(self):
-        return_picking_vals = {'picking_id': self.picking_ids.ids[0], }
-        return_picking_obj = self.env['stock.return.picking'].with_context(picking_id=self.picking_ids.ids[0],
-                                                                           active_model='stock.picking', ).create(
-            return_picking_vals)
-        return_picking_obj._onchange_picking_id()
-        returned_pickings_vals = return_picking_obj.create_returns()
-        returned_pickings = self.env['stock.picking'].browse(returned_pickings_vals['res_id'])
-        returned_pickings.action_set_quantities_to_reservation()
-        returned_pickings.action_assign()
-        returned_pickings._action_done()
+        # return_picking_vals = {'picking_id': self.picking_ids.ids[0], }
+        # return_picking_obj = self.env['stock.return.picking'].with_context(picking_id=self.picking_ids.ids[0],
+        #                                                                    active_model='stock.picking', ).create(
+        #     return_picking_vals)
+
+        # return_picking_obj._onchange_picking_id()
+        # returned_pickings_vals = return_picking_obj.create_returns()
+        # returned_pickings = self.env['stock.picking'].browse(returned_pickings_vals['res_id'])
+        # returned_pickings.action_set_quantities_to_reservation()
+        # returned_pickings.action_assign()
+        # returned_pickings._action_done()
+
+        for picking in self.picking_ids:
+            picking.action_cancel()
         self.state = 'returned'
 
     def action_done_all(self):

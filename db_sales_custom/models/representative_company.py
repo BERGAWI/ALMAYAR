@@ -6,8 +6,8 @@ from odoo.exceptions import ValidationError
 class RepresentativeCompany(models.Model):
     _name = "representative.company"
 
-    name = fields.Char(string='Name', required=True)
-    mobile_number = fields.Char(string='Mobile Number')
+    name = fields.Char(string='اﻻسم', required=True)
+    mobile_number = fields.Char(string='رقم الهاتف')
 
     @api.constrains('mobile_number')
     def _mobile_number_constraints(self):

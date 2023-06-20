@@ -27,15 +27,15 @@
         </xpath>
         <xpath expr="//t/div/div/div" position="after">
             <div t-if="doc.delivery_address" class="col-auto col-3 mw-100 mb-2">
-                <strong>Address:</strong>
+                <strong>العنوان:</strong>
                 <p class="m-0" t-field="doc.delivery_address"/>
             </div>
             <div t-if="doc.mobile_number" class="col-auto col-3 mw-100 mb-2">
-                <strong>Mobile Number:</strong>
+                <strong> رقم الهاتف:</strong>
                 <p class="m-0" t-field="doc.mobile_number"/>
             </div>
             <div t-if="doc.sales_representative_id" class="col-auto col-3 mw-100 mb-2">
-                <strong>Sales Representative:</strong>
+                <strong> مندوب التوصيل :</strong>
                 <p class="m-0" t-field="doc.sales_representative_id.name"/>
             </div>
         </xpath>

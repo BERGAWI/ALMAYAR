@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <odoo>
     <record id="sale_representative_reports" model="ir.actions.report">
-        <field name="name">Representative Report</field>
+        <field name="name"> طباعه التوصيل </field>
         <field name="model">sale.order</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">db_sales_custom.representative_report_template</field>
