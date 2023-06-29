@@ -31,5 +31,7 @@
                 </div>
             </h5>
         </xpath>
+        <xpath expr="//table[1]/thead/tr/th[4]" position="replace"/>
+        <xpath expr="//table[1]/tbody/t[2]/tr[1]/t[1]/td[4]" position="replace"/>
     </template>
 </odoo>
