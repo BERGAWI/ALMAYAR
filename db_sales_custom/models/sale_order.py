@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
-from odoo.exceptions import Warning
 
 
 class SaleOrderLine(models.Model):
@@ -52,27 +51,12 @@ class SaleOrder(models.Model):
         tracking=3,
         default='draft')
 
-    delivery_address = fields.Char(string='العنوان', required=True)
-    mobile_number = fields.Char(string='رقم الهاتف', required=True)
+    delivery_address = fields.Char(string='العنوان')
+    mobile_number = fields.Char(string='رقم الهاتف')
     sales_representative_id = fields.Many2one('sale.representative', string='مندوب توصيل', required=True)
     total_qty = fields.Float(string='إجمالى الكميات', compute='_compute_total_qty')
     total_lines = fields.Float(string='عدد اﻻصناف', compute='_compute_total_qty')
     partner_phone = fields.Char(related='partner_id.phone', string="هاتف العميل")
-
-    @api.model_create_multi
-    def create(self, vals_lst):
-        results = super(SaleOrder, self).create(vals_lst)
-
-
-    def check_phone_number(self):
-        for rec in self:
-            sales = self.env['sale.order'].sudo().search_count([('mobile_number','=',rec.mobile_number)])
-            print("==========>  ", sales)
-            if sales > 1 :
-                raise Warning(' تم ادخال رقم الهاتف سابقا ')
-
-
-
 
     @api.depends('order_line')
     def _compute_total_qty(self):
