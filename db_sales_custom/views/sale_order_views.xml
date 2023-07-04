@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="sales_data_search" model="ir.ui.view">
+            <field name="name">sale.order</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="delivery_address"/>
+                    <field name="mobile_number"/>
+                    <field name="sales_representative_id"/>
+                </xpath>
+            </field>
+        </record>
         <record id="view_order_trees" model="ir.ui.view">
             <field name="name">view.order.tree</field>
             <field name="model">sale.order</field>

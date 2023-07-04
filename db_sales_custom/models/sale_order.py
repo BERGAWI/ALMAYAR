@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+from odoo.exceptions import Warning
 
 
 class SaleOrderLine(models.Model):
@@ -51,8 +52,8 @@ class SaleOrder(models.Model):
         tracking=3,
         default='draft')
 
-    delivery_address = fields.Char(string='العنوان')
-    mobile_number = fields.Char(string='رقم الهاتف')
+    delivery_address = fields.Char(string='العنوان', required=True)
+    mobile_number = fields.Char(string='رقم الهاتف', required=True)
     sales_representative_id = fields.Many2one('sale.representative', string='مندوب توصيل', required=True)
     total_qty = fields.Float(string='إجمالى الكميات', compute='_compute_total_qty')
     total_lines = fields.Float(string='عدد اﻻصناف', compute='_compute_total_qty')

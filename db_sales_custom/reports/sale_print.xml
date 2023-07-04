@@ -9,6 +9,9 @@
                 <table border="1" class="table table-condensed" style="border-style:solid" dir="rtl">
                             <tr>
                                 <td>
+                                    <span>أسم المندوب</span>
+                                </td>
+                                <td>
                                     <span>أسم العميل</span>
                                 </td>
                                 <td>
@@ -22,6 +25,9 @@
                                 </td>
                             </tr>
                             <tr t-foreach="doc.item_ids" t-as="line">
+                                <td>
+                                    <span t-esc="line.sales_representative_id.name"/>
+                                </td>
                                 <td>
                                     <span t-esc="line.partner_id.name"/>
                                 </td>
