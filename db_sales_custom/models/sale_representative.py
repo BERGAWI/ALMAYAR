@@ -8,6 +8,7 @@ class SaleRepresentative(models.Model):
 
     name = fields.Char(string='Name', required=True)
     mobile_number = fields.Char(string='Mobile Number')
+    mobile_number2 = fields.Char(string='Mobile Number2')
     representative_company_id = fields.Many2one('representative.company', string='Company')
     sale_orders_count = fields.Integer(string='Sale Orders', compute='_compute_sale_orders_count')
     sale_ids = fields.One2many('sale.order','sales_representative_id')

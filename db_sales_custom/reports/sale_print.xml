@@ -4,44 +4,50 @@
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <t t-foreach="docs" t-as="doc">
-                    <div class="page">
+                    <div class="page" dir="rtl">
                         <div class="oe_structure"/>
                 <table border="1" class="table table-condensed" style="border-style:solid" dir="rtl">
                             <tr>
-                                <td>
-                                    <span>أسم المندوب</span>
+                                <td style="text-align:center">
+                                    <span>اسم المندوب</span>
                                 </td>
-                                <td>
-                                    <span>أسم العميل</span>
+                                
+                                <td style="text-align:center">
+                                    <span>عنوان الزبون</span>
                                 </td>
-                                <td>
-                                    <span>عنوان العميل</span>
+                                <td style="text-align:center">
+                                    <span>رقم هاتف الزبون</span>
                                 </td>
-                                <td>
-                                    <span>رقم هاتف العميل</span>
-                                </td>
-                                <td>
+                                <td style="text-align:center">
                                     <span>القيمة المالية</span>
+                                </td>
+								<td style="text-align:center">
+                                    <span>ملاحظــــــــــــــــــــات</span>
                                 </td>
                             </tr>
                             <tr t-foreach="doc.item_ids" t-as="line">
-                                <td>
+                                <td style="text-align:center">
                                     <span t-esc="line.sales_representative_id.name"/>
                                 </td>
-                                <td>
-                                    <span t-esc="line.partner_id.name"/>
-                                </td>
-                                <td>
+                                
+                                <td style="text-align:center">
                                     <span t-esc="line.delivery_address"/>
                                 </td>
-                                <td>
+                                <td style="text-align:center">
                                     <span t-esc="line.mobile_number"/>
                                 </td>
-                                <td>
+                                <td style="text-align:center">
                                     <span t-esc="line.amount_total"/>
+                                </td>
+								<td style="text-align:center">
+                                    <span t-esc="______________________"/>
                                 </td>
                             </tr>
                         </table>
+						<p><h5>اسم المندوب:<span t-esc="line.sales_representative_id.name"/></h5></p>
+						<p><h5>القيمة المستلمة:</h5></p>
+						<p><h5>التوقيع:</h5></p>
+						<p><h5>التاريخ: ____ / ____  /____</h5></p>
                     </div>
                 </t>
             </t>
