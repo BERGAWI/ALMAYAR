@@ -55,7 +55,6 @@ class SaleOrder(models.Model):
 
     delivery_address = fields.Char(string='العنوان', required=True)
     mobile_number = fields.Char(string='رقم الهاتف', required=True)
-    mobile_number2 = fields.Char(string='رقم الهاتف2', required=True)
     sales_representative_id = fields.Many2one('sale.representative', string='مندوب توصيل', required=True)
     total_qty = fields.Float(string='إجمالى الكميات', compute='_compute_total_qty')
     total_lines = fields.Float(string='عدد اﻻصناف', compute='_compute_total_qty')
@@ -74,16 +73,13 @@ class SaleOrder(models.Model):
     @api.constrains('mobile_number')
     def _mobile_number_constraints(self):
         if self.mobile_number and len(self.mobile_number) != 10:
-            raise ValidationError(_('رقم الهاتف لابد من ان يتكون من عشرة أرقام'))
+            raise ValidationError(_('Mobile Number Must be just 10 Digits'))
 
-
-        
     def _prepare_invoice(self):
         res = super(SaleOrder, self)._prepare_invoice()
         res.update({
             'delivery_address': self.delivery_address,
             'mobile_number': self.mobile_number,
-            'mobile_number2': self.mobile_number2,
             'sales_representative_id': self.sales_representative_id.id,
         })
         return res
