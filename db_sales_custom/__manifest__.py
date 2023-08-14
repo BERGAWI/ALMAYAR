@@ -10,9 +10,9 @@
     'depends': ['sale', 'sale_management', 'stock', 'sale_stock',
                 'product', 'purchase', 'account'],
     'data': [
+        'data/actions.xml',
         'security/ir.model.access.csv',
         'security/product_groups.xml',
-
         'views/sales_representative_view.xml',
         'views/representative_company_view.xml',
         'views/sale_order_views.xml',
@@ -26,7 +26,6 @@
         'reports/sale_templates.xml',
         'reports/purchase_templates.xml',
         'reports/picking_templates.xml',
-        'reports/sale_representative_print.xml',
         'wizard/sale_wizard.xml',
     ],
     'auto_install': False,

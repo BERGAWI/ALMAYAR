@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
-from odoo.exceptions import Warning
 
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError,UserError
+from odoo.exceptions import Warning
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -16,8 +15,9 @@ class SaleOrderLine(models.Model):
     product_available_qty = fields.Float(
         string="الكميه المتاحه",
         compute='_compute_product_available_qty', )
-    can_edit_price = fields.Boolean(compute='_compute_can_edit_price')
+    can_edit_price = fields.Boolean()
 
+    @api.onchange('can_edit_price')
     def _compute_can_edit_price(self):
         for rec in self:
             rec.can_edit_price = self.env.user.has_group('db_sales_custom.group_access_unit_price')
@@ -37,11 +37,11 @@ class SaleOrderLine(models.Model):
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    is_package = fields.Boolean(tracking=True,string="جملة")
     state = fields.Selection(
         selection=[
             ('draft', "قيد التجهيز"),
             ('sent', "تم الارسال"),
-            ('package', "جملة"),
             ('sale', "قيد التوصيل"),
             ('delivered', "تم التسليم"),
             ('returned', "تم الإرجاع"),
@@ -55,12 +55,45 @@ class SaleOrder(models.Model):
 
     delivery_address = fields.Char(string='العنوان', required=True)
     mobile_number = fields.Char(string='رقم الهاتف', required=True)
+    mobile_number2 = fields.Char(string='رقم الهاتف 2 ')
     sales_representative_id = fields.Many2one('sale.representative', string='مندوب توصيل', required=True)
     total_qty = fields.Float(string='إجمالى الكميات', compute='_compute_total_qty')
     total_lines = fields.Float(string='عدد اﻻصناف', compute='_compute_total_qty')
     partner_phone = fields.Char(related='partner_id.phone', string="هاتف العميل")
 
-    @api.depends('order_line')
+    def action_sale(self):
+        for rec in self:
+            rec.state = 'sale'
+
+    def action_delivered(self):
+        for rec in self:
+            rec.state = 'delivered'
+
+    @api.onchange('mobile_number')
+    def onchange_mobile_number(self):
+        if self.mobile_number:
+            sales = self.env['sale.order'].sudo().search_count([('mobile_number', '=', self.mobile_number)])
+            if sales > 1:
+                return {'warning': {
+                                       'title': _('تنبيه'),
+                                       'message': _('رقم الهاتف تم ادخاله سابقا')
+                                   }
+                        }
+
+
+    @api.onchange('mobile_number2')
+    def onchange_mobile_number2(self):
+        if self.mobile_number2:
+            sales = self.env['sale.order'].sudo().search_count([('mobile_number2', '=', self.mobile_number2)])
+            if sales > 1:
+                return {'warning': {
+                                       'title': _('تنبيه'),
+                                       'message': _('رقم الهاتف 2 تم ادخاله سابقا')
+                                   }
+                        }
+
+
+    @ api.depends('order_line')
     def _compute_total_qty(self):
         for rec in self:
             total_qty = total_lines = 0.0
@@ -70,10 +103,13 @@ class SaleOrder(models.Model):
             rec.total_qty = total_qty
             rec.total_lines = total_lines
 
-    @api.constrains('mobile_number')
+    @api.constrains('mobile_number','mobile_number2')
     def _mobile_number_constraints(self):
         if self.mobile_number and len(self.mobile_number) != 10:
             raise ValidationError(_('Mobile Number Must be just 10 Digits'))
+        if self.mobile_number2 and len(self.mobile_number2) != 10:
+            raise ValidationError(_('Mobile Number 2 Must be just 10 Digits'))
+
 
     def _prepare_invoice(self):
         res = super(SaleOrder, self)._prepare_invoice()
@@ -97,12 +133,25 @@ class SaleOrder(models.Model):
         # returned_pickings.action_assign()
         # returned_pickings._action_done()
 
-        for picking in self.picking_ids:
-            picking.action_cancel()
+        # for picking in self.picking_ids:
+        #     picking.action_cancel()
+        # self.state = 'returned'
+
+        return_picking_vals = {'picking_id': self.picking_ids.ids[0], }
+        return_picking_obj = self.env['stock.return.picking'].with_context(picking_id=self.picking_ids.ids[0],
+                                                                           active_model='stock.picking', ).create(
+            return_picking_vals)
+        return_picking_obj._onchange_picking_id()
+        returned_pickings_vals = return_picking_obj.create_returns()
+        returned_pickings = self.env['stock.picking'].browse(returned_pickings_vals['res_id'])
+        returned_pickings.action_set_quantities_to_reservation()
+        returned_pickings.action_assign()
+        returned_pickings._action_done()
         self.state = 'returned'
 
+
     def action_done_all(self):
-        self.action_delivery()
+        # self.action_delivery()
         order_invoice = self._create_invoices()
         order_invoice.action_post()
         default_payment_journal = self.company_id.so_payment_journal_id
@@ -114,12 +163,16 @@ class SaleOrder(models.Model):
         payment_register_obj._create_payments()
         self.state = 'delivered'
 
+    def action_quick_confirm(self):
+        self.action_confirm()
+        self.action_delivery()
+
     def action_delivery(self):
         for rec in self:
             for line in rec.order_line:
                 if line.product_id.detailed_type == 'product' and line.product_uom_qty > line.product_id.qty_available:
                     raise ValidationError(_('Please Check This Product Qty \'%s\'.') % (line.product_id.name,))
-            rec.action_confirm()
+            # rec.action_confirm()
             default_location_dest = self.company_id.so_delivery_location_id
             rec.picking_ids.location_dest_id = default_location_dest
             for picking in rec.picking_ids:
@@ -132,4 +185,6 @@ class SaleOrder(models.Model):
 
     def action_package(self):
         for rec in self:
-            rec.state = 'package'
+            rec.action_confirm()
+            rec.is_package = True
+
